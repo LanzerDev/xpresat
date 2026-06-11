@@ -1,0 +1,46 @@
+{
+  "profile": {
+    "avatarUrl": "/images/avatar.webp",
+    "title": "Juan Pérez",
+    "bio": "Software Architect con más de 15 años de experiencia. Especialista en arquitecturas limpias, escalabilidad y monorepos modernos."
+  },
+  "conversionLinks": [
+    {
+      "label": "Reservar Consultoría de Arquitectura",
+      "url": "https://calendly.com/juanperez/consultoria",
+      "icon": "calendar",
+      "featured": true
+    },
+    {
+      "label": "Mi Curso de Arquitectura Hexagonal",
+      "url": "https://escuela.dev/cursos/arquitectura-hexagonal",
+      "icon": "academic-cap",
+      "featured": false
+    },
+    {
+      "label": "Suscribite a mi Newsletter Semanal",
+      "url": "https://juanperez.substack.com",
+      "icon": "mail",
+      "featured": false
+    }
+  ],
+  "portfolio": [
+    {
+      "title": "Monorepo Boilerplate Moderno",
+      "description": "Plantilla de producción usando Turborepo, PNPM Workspaces, Astro y Payload CMS v3.",
+      "coverImage": "/images/portfolio-monorepo.webp",
+      "link": "https://github.com/juanperez/modern-monorepo-boilerplate"
+    },
+    {
+      "title": "Linter & Formatter Rules",
+      "description": "Configuraciones estrictas de ESLint y Prettier optimizadas para proyectos de gran escala.",
+      "coverImage": "/images/portfolio-linters.webp",
+      "link": "https://github.com/juanperez/strict-linter-rules"
+    }
+  ],
+  "socials": {
+    "instagram": "https://instagram.com/juanperez.dev",
+    "whatsapp": "https://wa.me/5491112345678",
+    "location": "Buenos Aires, Argentina"
+  }
+}
