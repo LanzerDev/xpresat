@@ -1,0 +1,239 @@
+---
+import type { Media, TeamMember } from '../data/cms';
+
+interface Props {
+  title: string;
+  history: any; // Lexical JSON
+  directorName: string;
+  directorRole: string;
+  directorImage: Media;
+  team: TeamMember[];
+}
+
+const { title, history, directorName, directorRole, directorImage, team } = Astro.props;
+
+// Recursive Lexical Node Parser to render raw CMS JSON into HTML
+function renderLexical(node: any): string {
+  if (!node) return '';
+  if (Array.isArray(node)) {
+    return node.map(renderLexical).join('');
+  }
+  if (node.type === 'text') {
+    let text = node.text || '';
+    if (node.bold) text = `<strong>${text}</strong>`;
+    if (node.italic) text = `<em>${text}</em>`;
+    return text;
+  }
+  const childrenHtml = node.children ? node.children.map(renderLexical).join('') : '';
+  switch (node.type) {
+    case 'root':
+      return childrenHtml;
+    case 'paragraph':
+      return `<p class="about-p">${childrenHtml}</p>`;
+    case 'heading':
+      const level = node.tag || 'h3';
+      return `<${level} class="about-heading">${childrenHtml}</${level}>`;
+    case 'list':
+      const listTag = node.listType === 'number' ? 'ol' : 'ul';
+      return `<${listTag} class="about-list">${childrenHtml}</${listTag}>`;
+    case 'listitem':
+      return `<li>${childrenHtml}</li>`;
+    default:
+      return childrenHtml;
+  }
+}
+
+const historyHtml = renderLexical(history?.root || history);
+---
+
+<section id="about" class="about-section">
+  <div class="container about-container">
+    <div class="about-info-col">
+      <h2 class="section-title">{title}</h2>
+      <div class="about-text" set:html={historyHtml}></div>
+      
+      <div class="director-card glass-panel">
+        <img src={directorImage?.url} alt={directorImage?.alt} class="director-img" />
+        <div class="director-info">
+          <h4 class="director-name">{directorName}</h4>
+          <p class="director-role">{directorRole}</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="about-team-col">
+      <h3 class="team-title">Nuestro Equipo</h3>
+      <div class="team-grid">
+        {team.map((member) => (
+          <div class="team-card glass-panel">
+            <div class="member-img-container">
+              <img src={member.memberImage?.url} alt={member.memberImage?.alt} class="member-img" />
+              {member.linkedinUrl && (
+                <a href={member.linkedinUrl} target="_blank" rel="noopener noreferrer" class="member-social" aria-label="LinkedIn Profile">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+                </a>
+              )}
+            </div>
+            <div class="member-meta">
+              <h4 class="member-name">{member.memberName}</h4>
+              <p class="member-role">{member.memberRole}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about-section {
+    padding: 8rem 0;
+    position: relative;
+  }
+
+  .about-container {
+    display: grid;
+    grid-template-columns: 1.12fr 1fr;
+    gap: 6rem;
+  }
+
+  .section-title {
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    margin-bottom: 2rem;
+    position: relative;
+  }
+
+  .section-title::before {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 60px;
+    height: 4px;
+    background-color: var(--color-primary);
+    border-radius: 2px;
+  }
+
+  .about-text {
+    color: var(--color-text-muted);
+    font-size: 1.05rem;
+    margin-bottom: 3rem;
+  }
+
+  :global(.about-p) {
+    margin-bottom: 1.5rem;
+  }
+
+  .director-card {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem;
+  }
+
+  .director-img {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--color-primary);
+  }
+
+  .director-name {
+    font-size: 1.2rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .director-role {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+  }
+
+  .team-title {
+    font-size: 1.8rem;
+    margin-bottom: 2.2rem;
+    letter-spacing: -0.01em;
+  }
+
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .team-card {
+    overflow: hidden;
+    padding: 0;
+    border-radius: 16px;
+  }
+
+  .member-img-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    overflow: hidden;
+  }
+
+  .member-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: var(--transition-smooth);
+    background-color: rgba(255, 255, 255, 0.05); /* Placeholder background */
+  }
+
+  .team-card:hover .member-img {
+    transform: scale(1.05);
+  }
+
+  .member-social {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    background-color: var(--color-bg-dark);
+    color: var(--color-text-light);
+    border: 1px solid var(--color-card-border);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: var(--transition-smooth);
+  }
+
+  .member-social:hover {
+    background-color: var(--color-primary);
+    color: var(--color-bg-dark);
+    border-color: var(--color-primary);
+  }
+
+  .member-img-container:hover .member-social,
+  .team-card:focus-within .member-social {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .member-meta {
+    padding: 1.25rem;
+  }
+
+  .member-name {
+    font-size: 1.15rem;
+    margin-bottom: 0.2rem;
+  }
+
+  .member-role {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+  }
+
+  @media (max-width: 968px) {
+    .about-container {
+      grid-template-columns: 1fr;
+      gap: 4rem;
+    }
+  }
+</style>

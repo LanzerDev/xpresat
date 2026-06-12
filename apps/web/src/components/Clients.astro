@@ -1,0 +1,84 @@
+---
+import type { ClientBrand } from '../data/cms';
+
+interface Props {
+  clients: ClientBrand[];
+}
+
+const { clients } = Astro.props;
+
+// Duplicate clients list to create the seamless infinite scroll effect
+const doubleClients = [...clients, ...clients];
+---
+
+<section class="clients-section">
+  <div class="container clients-container">
+    <h3 class="clients-title">Marcas que Confían en Nosotros</h3>
+  </div>
+  
+  <div class="logo-carousel">
+    <div class="logo-track">
+      {doubleClients.map((client) => (
+        <div class="logo-item">
+          {client.clientUrl ? (
+            <a href={client.clientUrl} target="_blank" rel="noopener noreferrer" aria-label={`Visitar web de ${client.clientName}`}>
+              <img src={client.clientLogo?.url} alt={client.clientName} class="client-logo" />
+            </a>
+          ) : (
+            <img src={client.clientLogo?.url} alt={client.clientName} class="client-logo" />
+          )}
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .clients-section {
+    padding: 5rem 0;
+    background-color: rgba(255, 255, 255, 0.01);
+    border-top: 1px solid var(--color-card-border);
+    border-bottom: 1px solid var(--color-card-border);
+    overflow: hidden;
+  }
+
+  .clients-container {
+    margin-bottom: 2.5rem;
+    text-align: center;
+  }
+
+  .clients-title {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--color-text-muted);
+  }
+
+  .logo-carousel {
+    position: relative;
+    width: 100%;
+    mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+  }
+
+  .logo-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 180px;
+    height: 60px;
+  }
+
+  .client-logo {
+    max-width: 130px;
+    max-height: 45px;
+    object-fit: contain;
+    filter: grayscale(1) brightness(0.85) contrast(1.2) opacity(0.4);
+    transition: var(--transition-smooth);
+  }
+
+  .client-logo:hover {
+    filter: grayscale(0) brightness(1) contrast(1) opacity(1);
+    transform: scale(1.05);
+  }
+</style>

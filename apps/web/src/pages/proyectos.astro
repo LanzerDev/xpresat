@@ -1,0 +1,78 @@
+---
+import '../styles/global.css';
+import Navbar from '../components/Navbar.astro';
+import ProjectsGrid from '../components/ProjectsGrid.astro';
+import ProjectModal from '../components/ProjectModal.astro';
+import Footer from '../components/Footer.astro';
+import { getLandingPage, getProjects } from '../data/cms';
+
+// Fetch all necessary data from PayloadCMS API
+const landingData = await getLandingPage();
+const projects = await getProjects();
+---
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portfolio - XpresaT</title>
+  <meta name="description" content="Casos de éxito y portafolio audiovisual de la agencia creativa XpresaT." />
+</head>
+<body class="portfolio-page">
+  <Navbar isHome={false} />
+  
+  <main class="portfolio-main">
+    <div class="container page-header">
+      <h1 class="page-title">Nuestro Portafolio</h1>
+      <p class="page-subtitle">Explorá los trabajos que hemos realizado para marcas destacadas.</p>
+    </div>
+    
+    <ProjectsGrid projects={projects} limit={false} />
+  </main>
+  
+  <ProjectModal />
+  <Footer contact={landingData.contact} />
+</body>
+</html>
+
+<style>
+  .portfolio-page {
+    background-color: var(--color-bg-dark);
+  }
+
+  .portfolio-main {
+    padding-top: 150px;
+    min-height: 80vh;
+  }
+
+  .page-header {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+
+  .page-title {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    margin-bottom: 1rem;
+    position: relative;
+    display: inline-block;
+  }
+
+  .page-title::before {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background-color: var(--color-primary);
+    border-radius: 2px;
+  }
+
+  .page-subtitle {
+    color: var(--color-text-muted);
+    font-size: 1.25rem;
+    margin-top: 1.5rem;
+  }
+</style>

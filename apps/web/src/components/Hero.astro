@@ -1,0 +1,100 @@
+---
+import type { Media } from '../data/cms';
+
+interface Props {
+  title: string;
+  subtitle: string;
+  backgroundImage: Media;
+  whatsappNumber: string;
+}
+
+const { title, subtitle, backgroundImage, whatsappNumber } = Astro.props;
+const whatsappLink = `https://wa.me/${whatsappNumber}?text=Hola,%20estoy%20interesado%20en%20trabajar%20con%20ustedes.`;
+---
+
+<section class="hero-section" style={`--hero-bg: url(${backgroundImage?.url})`}>
+  <div class="hero-overlay"></div>
+  <div class="container hero-container">
+    <div class="hero-content">
+      <h1 class="hero-title">{title}</h1>
+      <p class="hero-subtitle">{subtitle}</p>
+      <div class="hero-actions">
+        <a href={whatsappLink} target="_blank" rel="noopener noreferrer" class="btn-primary">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-whatsapp"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+          Iniciemos tu Proyecto
+        </a>
+        <a href="#about" class="btn-secondary">Saber Más</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero-section {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    background-image: var(--hero-bg);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    padding-top: 80px;
+  }
+
+  /* Dark overlay with slight color tint to blend with brand colors */
+  .hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, rgba(7, 8, 10, 0.4) 0%, rgba(7, 8, 10, 0.95) 100%);
+    z-index: 1;
+  }
+
+  .hero-container {
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero-content {
+    max-width: 750px;
+    animation: fade-in-up 1s ease-out forwards;
+  }
+
+  .hero-title {
+    font-size: clamp(2.5rem, 5vw, 4.2rem);
+    margin-bottom: 1.5rem;
+    line-height: 1.05;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .hero-subtitle {
+    font-size: clamp(1.1rem, 2vw, 1.4rem);
+    color: var(--color-text-muted);
+    margin-bottom: 2.5rem;
+    max-width: 600px;
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .icon-whatsapp {
+    margin-right: 0.25rem;
+  }
+
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>

@@ -69,6 +69,7 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
+    projects: Project;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -78,17 +79,22 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    projects: ProjectsSelect<false> | ProjectsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
   };
   db: {
-    defaultIDType: string;
+    defaultIDType: number;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    'landing-page': LandingPage;
+  };
+  globalsSelect: {
+    'landing-page': LandingPageSelect<false> | LandingPageSelect<true>;
+  };
   locale: null;
   widgets: {
     collections: CollectionsWidget;
@@ -122,7 +128,7 @@ export interface UserAuthOperations {
  * via the `definition` "users".
  */
 export interface User {
-  id: string;
+  id: number;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -147,7 +153,7 @@ export interface User {
  * via the `definition` "media".
  */
 export interface Media {
-  id: string;
+  id: number;
   alt: string;
   updatedAt: string;
   createdAt: string;
@@ -163,10 +169,47 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projects".
+ */
+export interface Project {
+  id: number;
+  title: string;
+  slug?: string | null;
+  description: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  featuredImage: number | Media;
+  featured?: boolean | null;
+  mediaGallery?:
+    | {
+        type: 'image' | 'video_upload' | 'video_external';
+        image?: (number | null) | Media;
+        videoFile?: (number | null) | Media;
+        videoUrl?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
-  id: string;
+  id: number;
   key: string;
   data:
     | {
@@ -183,20 +226,24 @@ export interface PayloadKv {
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
-  id: string;
+  id: number;
   document?:
     | ({
         relationTo: 'users';
-        value: string | User;
+        value: number | User;
       } | null)
     | ({
         relationTo: 'media';
-        value: string | Media;
+        value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'projects';
+        value: number | Project;
       } | null);
   globalSlug?: string | null;
   user: {
     relationTo: 'users';
-    value: string | User;
+    value: number | User;
   };
   updatedAt: string;
   createdAt: string;
@@ -206,10 +253,10 @@ export interface PayloadLockedDocument {
  * via the `definition` "payload-preferences".
  */
 export interface PayloadPreference {
-  id: string;
+  id: number;
   user: {
     relationTo: 'users';
-    value: string | User;
+    value: number | User;
   };
   key?: string | null;
   value?:
@@ -229,7 +276,7 @@ export interface PayloadPreference {
  * via the `definition` "payload-migrations".
  */
 export interface PayloadMigration {
-  id: string;
+  id: number;
   name?: string | null;
   batch?: number | null;
   updatedAt: string;
@@ -277,6 +324,28 @@ export interface MediaSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projects_select".
+ */
+export interface ProjectsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  description?: T;
+  featuredImage?: T;
+  featured?: T;
+  mediaGallery?:
+    | T
+    | {
+        type?: T;
+        image?: T;
+        videoFile?: T;
+        videoUrl?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
@@ -314,6 +383,146 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "landing-page".
+ */
+export interface LandingPage {
+  id: number;
+  hero: {
+    title: string;
+    subtitle: string;
+    backgroundImage: number | Media;
+  };
+  about: {
+    title: string;
+    history: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    };
+    directorName: string;
+    directorRole: string;
+    directorImage: number | Media;
+  };
+  team?:
+    | {
+        memberName: string;
+        memberRole: string;
+        memberImage: number | Media;
+        linkedinUrl?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  clients?:
+    | {
+        clientName: string;
+        clientLogo: number | Media;
+        clientUrl?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  services?:
+    | {
+        serviceName: string;
+        description: string;
+        icon: 'marketing' | 'audiovisual' | 'redes' | 'web' | 'estrategia';
+        id?: string | null;
+      }[]
+    | null;
+  process?:
+    | {
+        stepTitle: string;
+        stepDescription: string;
+        id?: string | null;
+      }[]
+    | null;
+  contact: {
+    phone: string;
+    email: string;
+    whatsappNumber: string;
+    instagramUrl: string;
+    facebookUrl: string;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "landing-page_select".
+ */
+export interface LandingPageSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        title?: T;
+        subtitle?: T;
+        backgroundImage?: T;
+      };
+  about?:
+    | T
+    | {
+        title?: T;
+        history?: T;
+        directorName?: T;
+        directorRole?: T;
+        directorImage?: T;
+      };
+  team?:
+    | T
+    | {
+        memberName?: T;
+        memberRole?: T;
+        memberImage?: T;
+        linkedinUrl?: T;
+        id?: T;
+      };
+  clients?:
+    | T
+    | {
+        clientName?: T;
+        clientLogo?: T;
+        clientUrl?: T;
+        id?: T;
+      };
+  services?:
+    | T
+    | {
+        serviceName?: T;
+        description?: T;
+        icon?: T;
+        id?: T;
+      };
+  process?:
+    | T
+    | {
+        stepTitle?: T;
+        stepDescription?: T;
+        id?: T;
+      };
+  contact?:
+    | T
+    | {
+        phone?: T;
+        email?: T;
+        whatsappNumber?: T;
+        instagramUrl?: T;
+        facebookUrl?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
