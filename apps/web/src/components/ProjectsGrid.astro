@@ -1,0 +1,227 @@
+---
+import type { Project } from '../data/cms';
+
+interface Props {
+  projects: Project[];
+  limit?: boolean;
+}
+
+const { projects, limit = false } = Astro.props;
+
+// Filter featured projects if limit is true (Home page)
+const filteredProjects = limit 
+  ? projects.filter(p => p.featured) 
+  : projects;
+
+// Recursive Lexical Node Parser to render rich text into HTML
+function renderLexical(node: any): string {
+  if (!node) return '';
+  if (Array.isArray(node)) {
+    return node.map(renderLexical).join('');
+  }
+  if (node.type === 'text') {
+    let text = node.text || '';
+    if (node.bold) text = `<strong>${text}</strong>`;
+    if (node.italic) text = `<em>${text}</em>`;
+    return text;
+  }
+  const childrenHtml = node.children ? node.children.map(renderLexical).join('') : '';
+  switch (node.type) {
+    case 'root':
+      return childrenHtml;
+    case 'paragraph':
+      return `<p class="project-desc-p">${childrenHtml}</p>`;
+    case 'heading':
+      const level = node.tag || 'h4';
+      return `<${level}>${childrenHtml}</${level}>`;
+    case 'list':
+      const listTag = node.listType === 'number' ? 'ol' : 'ul';
+      return `<${listTag}>${childrenHtml}</${listTag}>`;
+    case 'listitem':
+      return `<li>${childrenHtml}</li>`;
+    default:
+      return childrenHtml;
+  }
+}
+---
+
+<section class="portfolio-section">
+  <div class="container">
+    {limit && (
+      <div class="section-header">
+        <h2 class="section-title">Casos de Éxito</h2>
+        <p class="section-subtitle">Una selección de producciones audiovisuales, campañas y desarrollos que definen nuestro estándar.</p>
+      </div>
+    )}
+
+    <div class="projects-grid">
+      {filteredProjects.map((project) => {
+        // Pre-render the rich text description to HTML
+        const descriptionHtml = renderLexical(project.description?.root || project.description);
+        
+        // Safe stringify of project data for client-side modal parsing
+        const projectDataJson = JSON.stringify({
+          title: project.title,
+          descriptionHtml: descriptionHtml,
+          featuredImage: project.featuredImage,
+          mediaGallery: project.mediaGallery
+        });
+
+        return (
+          <article 
+            class="project-card glass-panel" 
+            data-project-data={projectDataJson}
+            role="button"
+            tabindex="0"
+            aria-label={`Ver detalles del proyecto ${project.title}`}
+          >
+            <div class="card-media">
+              <img src={project.featuredImage?.url} alt={project.featuredImage?.alt} class="card-img" />
+              <div class="card-overlay">
+                <div class="overlay-content">
+                  <span class="view-tag">Ver Proyecto</span>
+                </div>
+              </div>
+            </div>
+            <div class="card-info">
+              <h3 class="card-title">{project.title}</h3>
+            </div>
+          </article>
+        );
+      })}
+    </div>
+
+    {limit && (
+      <div class="portfolio-action">
+        <a href="/proyectos" class="btn-secondary">Ver Todos los Proyectos</a>
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  .portfolio-section {
+    padding: 8rem 0;
+  }
+
+  .section-header {
+    text-align: center;
+    max-width: 650px;
+    margin: 0 auto 5rem auto;
+  }
+
+  .section-title {
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    margin-bottom: 1rem;
+    position: relative;
+    display: inline-block;
+  }
+
+  .section-title::before {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background-color: var(--color-primary);
+    border-radius: 2px;
+  }
+
+  .section-subtitle {
+    color: var(--color-text-muted);
+    font-size: 1.1rem;
+    margin-top: 1.5rem;
+  }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
+  }
+
+  .project-card {
+    overflow: hidden;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card-media {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16/10;
+    overflow: hidden;
+    background-color: rgba(255, 255, 255, 0.02);
+  }
+
+  .card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: var(--transition-smooth);
+  }
+
+  .card-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(7, 8, 10, 0.7);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: var(--transition-smooth);
+  }
+
+  .view-tag {
+    font-family: var(--font-display);
+    font-weight: 700;
+    background-color: var(--color-accent-red);
+    color: var(--color-text-light);
+    padding: 0.6rem 1.4rem;
+    border-radius: 9999px;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transform: translateY(10px);
+    transition: var(--transition-smooth);
+    box-shadow: 0 4px 15px rgba(229, 52, 85, 0.4);
+  }
+
+  .project-card:hover .card-img {
+    transform: scale(1.03);
+  }
+
+  .project-card:hover .card-overlay,
+  .project-card:focus-visible .card-overlay {
+    opacity: 1;
+  }
+
+  .project-card:hover .view-tag,
+  .project-card:focus-visible .view-tag {
+    transform: translateY(0);
+  }
+
+  .card-info {
+    padding: 1.5rem;
+    background-color: rgba(255, 255, 255, 0.005);
+  }
+
+  .card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  .portfolio-action {
+    margin-top: 4rem;
+    text-align: center;
+  }
+</style>
