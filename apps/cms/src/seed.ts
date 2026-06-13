@@ -179,8 +179,10 @@ async function runSeed() {
         phone: '+52 1 667 447 0203',
         email: 'Xtampacln@gmail.com',
         whatsappNumber: '5216674470203',
-        instagramUrl: 'https://www.instagram.com/xpresatcln?igsh=dG1nY3l1NGQ1amI4',
-        facebookUrl: 'https://www.facebook.com/share/18dwa1LV61/?mibextid=wwXIfr',
+        socialNetworks: [
+          { platform: 'instagram', url: 'https://www.instagram.com/xpresatcln?igsh=dG1nY3l1NGQ1amI4' },
+          { platform: 'facebook', url: 'https://www.facebook.com/share/18dwa1LV61/?mibextid=wwXIfr' },
+        ],
       },
     },
   })
