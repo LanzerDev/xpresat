@@ -9,6 +9,7 @@ Last updated: 2026-06-13
 - .agents/skills
 - /home/lanzerdev/.agents/skills
 - /home/lanzerdev/.config/opencode/skills
+- /home/lanzerdev/.claude/skills
 - /home/lanzerdev/.gemini/skills
 - /home/lanzerdev/.gemini/antigravity/skills
 - /home/lanzerdev/.copilot/skills
