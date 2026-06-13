@@ -29,12 +29,16 @@ export interface ProcessStep {
   stepDescription: string;
 }
 
+export interface SocialNetwork {
+  platform: 'instagram' | 'facebook' | 'tiktok' | 'linkedin' | 'youtube' | 'x';
+  url: string;
+}
+
 export interface ContactInfo {
   phone: string;
   email: string;
   whatsappNumber: string;
-  instagramUrl: string;
-  facebookUrl: string;
+  socialNetworks: SocialNetwork[];
 }
 
 export interface LandingPageData {
