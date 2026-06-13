@@ -452,8 +452,13 @@ export interface LandingPage {
     phone: string;
     email: string;
     whatsappNumber: string;
-    instagramUrl: string;
-    facebookUrl: string;
+    socialNetworks?:
+      | {
+          platform: 'instagram' | 'facebook' | 'tiktok' | 'linkedin' | 'youtube' | 'x';
+          url: string;
+          id?: string | null;
+        }[]
+      | null;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -517,8 +522,13 @@ export interface LandingPageSelect<T extends boolean = true> {
         phone?: T;
         email?: T;
         whatsappNumber?: T;
-        instagramUrl?: T;
-        facebookUrl?: T;
+        socialNetworks?:
+          | T
+          | {
+              platform?: T;
+              url?: T;
+              id?: T;
+            };
       };
   updatedAt?: T;
   createdAt?: T;

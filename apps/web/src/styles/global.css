@@ -137,7 +137,7 @@ a:focus-visible, button:focus-visible {
     "video info"
     "video gallery";
   grid-template-columns: 1.5fr 1fr;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: 1fr 1fr;
   gap: 1.5rem;
   height: 100%;
 }
