@@ -13,23 +13,35 @@ import { getLandingPage, getProjects } from '../data/cms';
 // Fetch dynamic data from the CMS (Payload v3)
 const landingData = await getLandingPage();
 const projects = await getProjects();
+
+const theme = landingData.theme;
+const logoVariant = theme?.logoVariant && theme.logoVariant !== 'default' ? `-${theme.logoVariant}` : '';
+const logoLightSrc = theme?.logoLight?.url || `/logos/logo-horizontal${logoVariant}.png`;
+const logoDarkSrc = theme?.logoDark?.url || `/logos/logo-horizontal${logoVariant}.png`;
+const isDefaultLogo = !theme?.logoLight?.url && (!theme?.logoVariant || theme.logoVariant === 'default');
 ---
 
 <!DOCTYPE html>
-<html lang="es">
+<html
+  lang="es"
+  style={`--color-primary:${theme?.primaryColor||'#3d9ef2'};--color-accent-red:${theme?.accentColor||'#e53455'};--color-accent-yellow:${theme?.accentYellowColor||'#f8aa1f'};`}
+>
 <head>
   <meta charset="utf-8" />
+  <script is:inline>
+    (function(){var s=localStorage.getItem('theme'),d=window.matchMedia('(prefers-color-scheme: dark)').matches;if(s==='light'||(!s&&!d))document.documentElement.classList.add('light');})();
+  </script>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="icon" href="/favicon.ico" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="generator" content={Astro.generator} />
-  
+
   <title>XpresaT - Agencia Creativa & Producción Audiovisual</title>
   <meta name="description" content="Agencia de marketing digital, producción audiovisual de alta calidad y desarrollo web optimizado para conversiones." />
 </head>
 <body>
   <!-- Header / Navigation -->
-  <Navbar isHome={true} />
+  <Navbar isHome={true} logoLightSrc={logoLightSrc} logoDarkSrc={logoDarkSrc} isDefaultLogo={isDefaultLogo} />
 
   <!-- Hero Section -->
   <Hero 
@@ -69,6 +81,6 @@ const projects = await getProjects();
   <ProjectModal />
 
   <!-- Footer & Contact section -->
-  <Footer contact={landingData.contact} />
+  <Footer contact={landingData.contact} logoLightSrc={logoLightSrc} logoDarkSrc={logoDarkSrc} isDefaultLogo={isDefaultLogo} />
 </body>
 </html>

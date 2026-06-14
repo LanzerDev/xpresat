@@ -67,6 +67,7 @@ const whatsappLink = `https://wa.me/${whatsappNumber}?text=Hola,%20estoy%20inter
 
   .hero-title {
     font-size: clamp(2.5rem, 5vw, 4.2rem);
+    color: #ffffff;
     margin-bottom: 1.5rem;
     line-height: 1.05;
     text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
@@ -74,7 +75,7 @@ const whatsappLink = `https://wa.me/${whatsappNumber}?text=Hola,%20estoy%20inter
 
   .hero-subtitle {
     font-size: clamp(1.1rem, 2vw, 1.4rem);
-    color: var(--color-text-muted);
+    color: #9ca3af;
     margin-bottom: 2.5rem;
     max-width: 600px;
   }
@@ -83,6 +84,16 @@ const whatsappLink = `https://wa.me/${whatsappNumber}?text=Hola,%20estoy%20inter
     display: flex;
     flex-wrap: wrap;
     gap: 1rem;
+  }
+
+  .hero-actions :global(.btn-secondary) {
+    color: var(--color-accent-yellow);
+    border-color: var(--color-accent-yellow);
+  }
+
+  .hero-actions :global(.btn-secondary:hover) {
+    background-color: rgba(248, 170, 31, 0.1);
+    border-color: var(--color-accent-yellow);
   }
 
   .icon-whatsapp {

@@ -9,18 +9,30 @@ import { getLandingPage, getProjects } from '../data/cms';
 // Fetch all necessary data from PayloadCMS API
 const landingData = await getLandingPage();
 const projects = await getProjects();
+
+const theme = landingData.theme;
+const logoVariant = theme?.logoVariant && theme.logoVariant !== 'default' ? `-${theme.logoVariant}` : '';
+const logoLightSrc = theme?.logoLight?.url || `/logos/logo-horizontal${logoVariant}.png`;
+const logoDarkSrc = theme?.logoDark?.url || `/logos/logo-horizontal${logoVariant}.png`;
+const isDefaultLogo = !theme?.logoLight?.url && (!theme?.logoVariant || theme.logoVariant === 'default');
 ---
 
 <!DOCTYPE html>
-<html lang="es">
+<html
+  lang="es"
+  style={`--color-primary:${theme?.primaryColor||'#3d9ef2'};--color-accent-red:${theme?.accentColor||'#e53455'};--color-accent-yellow:${theme?.accentYellowColor||'#f8aa1f'};`}
+>
 <head>
   <meta charset="UTF-8" />
+  <script is:inline>
+    (function(){var s=localStorage.getItem('theme'),d=window.matchMedia('(prefers-color-scheme: dark)').matches;if(s==='light'||(!s&&!d))document.documentElement.classList.add('light');})();
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Portfolio - XpresaT</title>
   <meta name="description" content="Casos de éxito y portafolio audiovisual de la agencia creativa XpresaT." />
 </head>
 <body class="portfolio-page">
-  <Navbar isHome={false} />
+  <Navbar isHome={false} logoLightSrc={logoLightSrc} logoDarkSrc={logoDarkSrc} isDefaultLogo={isDefaultLogo} />
   
   <main class="portfolio-main">
     <div class="container page-header">
@@ -32,7 +44,7 @@ const projects = await getProjects();
   </main>
   
   <ProjectModal />
-  <Footer contact={landingData.contact} />
+  <Footer contact={landingData.contact} logoLightSrc={logoLightSrc} logoDarkSrc={logoDarkSrc} isDefaultLogo={isDefaultLogo} />
 </body>
 </html>
 

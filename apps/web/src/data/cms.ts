@@ -41,6 +41,15 @@ export interface ContactInfo {
   socialNetworks: SocialNetwork[];
 }
 
+export interface ThemeConfig {
+  logoVariant: 'default' | 'azul' | 'rojo' | 'amarillo';
+  primaryColor: string;
+  accentColor: string;
+  accentYellowColor: string;
+  logoLight?: Media;
+  logoDark?: Media;
+}
+
 export interface LandingPageData {
   hero: {
     title: string;
@@ -59,6 +68,7 @@ export interface LandingPageData {
   services: ServiceItem[];
   process: ProcessStep[];
   contact: ContactInfo;
+  theme: ThemeConfig;
 }
 
 export interface ProjectMedia {
@@ -117,7 +127,8 @@ export async function getLandingPage(): Promise<LandingPageData> {
       clients: [],
       services: [],
       process: [],
-      contact: { phone: '', email: '', whatsappNumber: '', instagramUrl: '', facebookUrl: '' }
+      contact: { phone: '', email: '', whatsappNumber: '', socialNetworks: [] },
+      theme: { logoVariant: 'default', primaryColor: '#3d9ef2', accentColor: '#e53455', accentYellowColor: '#f8aa1f' },
     };
   }
 }
