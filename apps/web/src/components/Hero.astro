@@ -33,8 +33,8 @@ const titleWords = (title || '').trim().split(/\s+/).filter(Boolean);
   <div class="container hero-container">
     <div class="hero-content">
       <h1 class="hero-title">
-        {titleWords.map((word) => (
-          <span class="hero-word"><span class="hero-word-inner">{word}</span></span>
+        {titleWords.map((word, i) => (
+          <span class="hero-word"><span class="hero-word-inner" style={`--i:${i}`}>{word}</span></span>
         ))}
       </h1>
       <p class="hero-subtitle">{subtitle}</p>
@@ -131,8 +131,17 @@ const titleWords = (title || '').trim().split(/\s+/).filter(Boolean);
     display: inline-block;
   }
 
+  /* CSS-driven entrance: runs at first paint (motion-ok is set inline in
+     <head> before render), so the LCP text never waits for the JS bundle. */
   html.motion-ok .hero-word-inner {
     transform: translateY(110%);
+    animation: hero-word-rise 0.8s var(--ease-out-expo) both;
+    animation-delay: calc(0.15s + var(--i, 0) * 0.08s);
+  }
+
+  @keyframes hero-word-rise {
+    from { transform: translateY(110%); }
+    to { transform: translateY(0); }
   }
 
   .hero-subtitle {
@@ -148,9 +157,19 @@ const titleWords = (title || '').trim().split(/\s+/).filter(Boolean);
     gap: 1rem;
   }
 
-  html.motion-ok .hero-subtitle,
+  html.motion-ok .hero-subtitle {
+    opacity: 0;
+    animation: hero-fade-rise 0.6s var(--ease-out-expo) 0.55s both;
+  }
+
   html.motion-ok .hero-actions {
     opacity: 0;
+    animation: hero-fade-rise 0.6s var(--ease-out-expo) 0.75s both;
+  }
+
+  @keyframes hero-fade-rise {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: none; }
   }
 
   .hero-actions :global(.btn-secondary) {
@@ -177,56 +196,27 @@ const titleWords = (title || '').trim().split(/\s+/).filter(Boolean);
 </style>
 
 <script>
-  import { animate, stagger } from 'motion';
-
-  function runHeroIntro() {
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const words = document.querySelectorAll<HTMLElement>('.hero-word-inner');
-    const subtitle = document.querySelector<HTMLElement>('.hero-subtitle');
-    const actions = document.querySelector<HTMLElement>('.hero-actions');
-
-    // Reduced motion: ensure everything is visible without any movement.
-    if (reduced) {
-      words.forEach((w) => (w.style.transform = 'none'));
-      if (subtitle) subtitle.style.opacity = '1';
-      if (actions) actions.style.opacity = '1';
-      return;
-    }
-
-    if (words.length) {
-      animate(
-        words,
-        { y: ['110%', '0%'] },
-        { duration: 0.8, delay: stagger(0.08, { startDelay: 0.15 }), ease: [0.16, 1, 0.3, 1] }
-      );
-    }
-    if (subtitle) {
-      animate(subtitle, { opacity: [0, 1], y: [16, 0] }, { duration: 0.6, delay: 0.55, ease: [0.16, 1, 0.3, 1] });
-    }
-    if (actions) {
-      animate(actions, { opacity: [0, 1], y: [16, 0] }, { duration: 0.6, delay: 0.75, ease: [0.16, 1, 0.3, 1] })
-        // Clear inline transform so the button :hover scale keeps working.
-        .finished.then(() => actions.style.removeProperty('transform'))
-        .catch(() => {});
-    }
-
-    // Pause the Ken Burns zoom when the hero scrolls out of view.
+  // The hero entrance (title words, subtitle, actions) is fully CSS-driven and
+  // gated by `html.motion-ok` — so it never waits for this bundle and reduced
+  // motion is honoured without JS. The only thing left for JS is pausing the
+  // Ken Burns zoom while the hero is offscreen, to save CPU.
+  function setupKenBurns() {
     const bg = document.querySelector<HTMLElement>('.hero-bg-img');
     const section = document.querySelector<HTMLElement>('.hero-section');
-    if (bg && section) {
-      const io = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((e) => {
-            bg.style.animationPlayState = e.isIntersecting ? 'running' : 'paused';
-          });
-        },
-        { threshold: 0 }
-      );
-      io.observe(section);
-    }
+    if (!bg || !section) return;
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          bg.style.animationPlayState = e.isIntersecting ? 'running' : 'paused';
+        });
+      },
+      { threshold: 0 }
+    );
+    io.observe(section);
   }
 
   // ClientRouter fires astro:page-load on the initial load and after every
   // client-side navigation, so this covers both cases.
-  document.addEventListener('astro:page-load', runHeroIntro);
+  document.addEventListener('astro:page-load', setupKenBurns);
 </script>
