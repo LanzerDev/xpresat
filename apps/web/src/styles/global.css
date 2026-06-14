@@ -44,6 +44,7 @@ html {
 body {
   overflow-x: hidden;
   line-height: 1.6;
+  text-wrap: pretty;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -52,6 +53,7 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: -0.02em;
   color: var(--color-text-light);
   line-height: 1.1;
+  text-wrap: balance;
 }
 
 a {
