@@ -18,8 +18,8 @@ const projects = await getProjects();
 
 const theme = landingData.theme;
 const logoVariant = theme?.logoVariant && theme.logoVariant !== 'default' ? `-${theme.logoVariant}` : '';
-const logoLightSrc = theme?.logoLight?.url || `/logos/logo-horizontal${logoVariant}.png`;
-const logoDarkSrc = theme?.logoDark?.url || `/logos/logo-horizontal${logoVariant}.png`;
+const logoLightSrc = theme?.logoLight?.url || `/logos/logo-horizontal${logoVariant}.webp`;
+const logoDarkSrc = theme?.logoDark?.url || `/logos/logo-horizontal${logoVariant}.webp`;
 const isDefaultLogo = !theme?.logoLight?.url && (!theme?.logoVariant || theme.logoVariant === 'default');
 const sectionColorMap = {
   about: theme?.aboutLogoColor || 'amarillo',

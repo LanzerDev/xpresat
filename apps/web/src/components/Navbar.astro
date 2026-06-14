@@ -12,11 +12,11 @@ interface Props {
 const { isHome = true, logoLightSrc, sectionColorMap = {} } = Astro.props;
 
 const COLOR_LOGOS: Record<LogoColor, string> = {
-  default: '/logos/logo-horizontal.png',
-  amarillo: '/logos/logo-horizontal-amarillo.png',
-  rojo: '/logos/logo-horizontal-rojo.png',
-  azul: '/logos/logo-horizontal-azul.png',
-  verde: '/logos/logo-horizontal-verde.png',
+  default: '/logos/logo-horizontal.webp',
+  amarillo: '/logos/logo-horizontal-amarillo.webp',
+  rojo: '/logos/logo-horizontal-rojo.webp',
+  azul: '/logos/logo-horizontal-azul.webp',
+  verde: '/logos/logo-horizontal-verde.webp',
 };
 
 const allColors = Object.keys(COLOR_LOGOS) as LogoColor[];
