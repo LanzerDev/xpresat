@@ -13,6 +13,7 @@ export const Media: CollectionConfig = {
     },
   ],
   upload: {
+    mimeTypes: ['image/svg+xml', 'image/png', 'image/jpeg', 'image/gif', 'image/webp'],
     staticDir: 'media',
     pasteURL: {
       allowList: [

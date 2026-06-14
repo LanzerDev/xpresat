@@ -35,3 +35,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+.atl/
+
+# skills
+.agents/skills/impeccable
+.claude/skills/impeccable
+
