@@ -59,12 +59,6 @@ async function runSeed() {
   const directorImgId = await uploadMockMedia('director.png', 'Director XpresaT')
   const edgarImgId = await uploadMockMedia('edgar.png', 'Edgar Sanchez Photo')
   const lanzerImgId = await uploadMockMedia('lanzer.png', 'Lanzer Cabanillas Photo')
-  const volvoLogoId = await uploadMockMedia('logo-volvo.png', 'Volvo Logo')
-  const mazdaLogoId = await uploadMockMedia('logo-mazda.png', 'Mazda Logo')
-  const tmLogoId = await uploadMockMedia('logo-tm.png', 'TM Noticias Logo')
-  const crunchyLogoId = await uploadMockMedia('logo-crunchy.png', 'Crunchy Logo')
-  const hmLogoId = await uploadMockMedia('logo-hm.png', 'HM Total Home Logo')
-  const natuvidLogoId = await uploadMockMedia('logo-natuvid.png', 'Natuvid Logo')
   const projectFeaturedImgId = await uploadMockMedia('project-featured.png', 'Project Featured Image')
   const galleryImg1Id = await uploadMockMedia('gallery-1.png', 'Gallery Asset 1')
   const galleryImg2Id = await uploadMockMedia('gallery-2.png', 'Gallery Asset 2')
@@ -122,14 +116,7 @@ async function runSeed() {
           linkedinUrl: 'https://linkedin.com',
         },
       ],
-      clients: [
-        { clientName: 'Volvo', clientLogo: volvoLogoId, clientUrl: 'https://volvocars.com' },
-        { clientName: 'Mazda', clientLogo: mazdaLogoId, clientUrl: 'https://mazda.com' },
-        { clientName: 'TM Noticias', clientLogo: tmLogoId },
-        { clientName: 'Crunchy', clientLogo: crunchyLogoId },
-        { clientName: 'HM Total Home', clientLogo: hmLogoId },
-        { clientName: 'Natuvid', clientLogo: natuvidLogoId },
-      ],
+      clients: [],
       services: [
         {
           serviceName: 'Producción Audiovisual',

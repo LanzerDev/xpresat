@@ -14,7 +14,8 @@ export interface TeamMember {
 
 export interface ClientBrand {
   clientName: string;
-  clientLogo: Media;
+  clientLogoDark: Media;
+  clientLogoLight: Media;
   clientUrl?: string;
 }
 

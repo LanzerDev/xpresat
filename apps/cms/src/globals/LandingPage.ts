@@ -113,11 +113,18 @@ export const LandingPage: GlobalConfig = {
           label: 'Nombre de la Marca / Cliente',
         },
         {
-          name: 'clientLogo',
+          name: 'clientLogoDark',
           type: 'upload',
           relationTo: 'media',
           required: true,
-          label: 'Logo',
+          label: 'Logo (versión oscura — para fondo claro)',
+        },
+        {
+          name: 'clientLogoLight',
+          type: 'upload',
+          relationTo: 'media',
+          required: true,
+          label: 'Logo (versión clara — para fondo oscuro)',
         },
         {
           name: 'clientUrl',
