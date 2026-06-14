@@ -98,7 +98,11 @@ export interface Project {
   mediaGallery: ProjectMedia[];
 }
 
-const PAYLOAD_URL = process.env.PAYLOAD_API_URL || 'http://localhost:3000';
+// Strip any trailing slash so concatenating a leading-slash path (e.g.
+// "/api/media/...") never produces a double slash. A double slash survives a
+// plain <img> (the CMS 308-redirects to the canonical URL), but Vercel Image
+// Optimization does not follow that redirect and fails with 400.
+const PAYLOAD_URL = (process.env.PAYLOAD_API_URL || 'http://localhost:3000').replace(/\/+$/, '');
 
 // Recursively walks the response object and prepends PAYLOAD_URL to any relative image/video paths
 function resolveUrls(obj: any): any {
