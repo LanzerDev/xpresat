@@ -1,5 +1,5 @@
 ---
-import type { ClientBrand } from '../data/cms';
+import type { ClientBrand } from "../data/cms";
 
 interface Props {
   clients: ClientBrand[];
@@ -7,7 +7,6 @@ interface Props {
 
 const { clients } = Astro.props;
 
-// Duplicate clients list to create the seamless infinite scroll effect
 const doubleClients = [...clients, ...clients];
 ---
 
@@ -15,20 +14,47 @@ const doubleClients = [...clients, ...clients];
   <div class="container clients-container">
     <h3 class="clients-title">Marcas que Confían en Nosotros</h3>
   </div>
-  
+
   <div class="logo-carousel">
     <div class="logo-track">
-      {doubleClients.map((client) => (
-        <div class="logo-item">
-          {client.clientUrl ? (
-            <a href={client.clientUrl} target="_blank" rel="noopener noreferrer" aria-label={`Visitar web de ${client.clientName}`}>
-              <img src={client.clientLogo?.url} alt={client.clientName} class="client-logo" />
-            </a>
-          ) : (
-            <img src={client.clientLogo?.url} alt={client.clientName} class="client-logo" />
-          )}
-        </div>
-      ))}
+      {
+        doubleClients.map((client) => (
+          <div class="logo-item">
+            {client.clientUrl ? (
+              <a
+                href={client.clientUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Visitar web de ${client.clientName}`}
+              >
+                <img
+                  src={client.clientLogoLight?.url}
+                  alt={client.clientName}
+                  class="client-logo logo-light"
+                />
+                <img
+                  src={client.clientLogoDark?.url}
+                  alt={client.clientName}
+                  class="client-logo logo-dark"
+                />
+              </a>
+            ) : (
+              <>
+                <img
+                  src={client.clientLogoLight?.url}
+                  alt={client.clientName}
+                  class="client-logo logo-light"
+                />
+                <img
+                  src={client.clientLogoDark?.url}
+                  alt={client.clientName}
+                  class="client-logo logo-dark"
+                />
+              </>
+            )}
+          </div>
+        ))
+      }
     </div>
   </div>
 </section>
@@ -57,27 +83,74 @@ const doubleClients = [...clients, ...clients];
   .logo-carousel {
     position: relative;
     width: 100%;
-    mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
-    -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 15%,
+      black 85%,
+      transparent
+    );
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 15%,
+      black 85%,
+      transparent
+    );
+  }
+
+  .logo-track {
+    display: flex;
+    width: max-content;
+    animation: scroll 30s linear infinite;
+  }
+
+  @keyframes scroll {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
   }
 
   .logo-item {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 180px;
-    height: 60px;
+    width: 340px;
+    height: 80px;
   }
 
   .client-logo {
-    max-width: 130px;
-    max-height: 45px;
+    width: 160px;
+    height: 60px;
     object-fit: contain;
-    filter: grayscale(1) brightness(0.85) contrast(1.2) opacity(0.4);
     transition: var(--transition-smooth);
   }
 
-  .client-logo:hover {
+  /* Dark mode: show light logos (white) */
+  .client-logo.logo-light {
+    display: block;
+    filter: grayscale(1) brightness(0.85) contrast(1.2) opacity(0.4);
+  }
+
+  .client-logo.logo-dark {
+    display: none;
+  }
+
+  /* Light mode: show dark logos (black) */
+  :global(html.light) .client-logo.logo-light {
+    display: none;
+  }
+
+  :global(html.light) .client-logo.logo-dark {
+    display: block;
+    filter: grayscale(1) opacity(0.35);
+  }
+
+  /* Hover: full color regardless of mode */
+  .logo-item:hover .client-logo {
     filter: grayscale(0) brightness(1) contrast(1) opacity(1);
     transform: scale(1.05);
   }

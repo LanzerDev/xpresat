@@ -428,7 +428,8 @@ export interface LandingPage {
   clients?:
     | {
         clientName: string;
-        clientLogo: number | Media;
+        clientLogoDark: number | Media;
+        clientLogoLight: number | Media;
         clientUrl?: string | null;
         id?: string | null;
       }[]
@@ -505,7 +506,8 @@ export interface LandingPageSelect<T extends boolean = true> {
     | T
     | {
         clientName?: T;
-        clientLogo?: T;
+        clientLogoDark?: T;
+        clientLogoLight?: T;
         clientUrl?: T;
         id?: T;
       };
