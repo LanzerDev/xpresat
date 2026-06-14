@@ -456,6 +456,10 @@ export interface LandingPage {
     primaryColor?: string | null;
     accentColor?: string | null;
     accentYellowColor?: string | null;
+    aboutLogoColor?: ('amarillo' | 'rojo' | 'azul' | 'verde' | 'default') | null;
+    servicesLogoColor?: ('rojo' | 'amarillo' | 'azul' | 'verde' | 'default') | null;
+    processLogoColor?: ('azul' | 'amarillo' | 'rojo' | 'verde' | 'default') | null;
+    contactLogoColor?: ('verde' | 'amarillo' | 'rojo' | 'azul' | 'default') | null;
   };
   contact: {
     phone: string;
@@ -535,6 +539,10 @@ export interface LandingPageSelect<T extends boolean = true> {
         primaryColor?: T;
         accentColor?: T;
         accentYellowColor?: T;
+        aboutLogoColor?: T;
+        servicesLogoColor?: T;
+        processLogoColor?: T;
+        contactLogoColor?: T;
       };
   contact?:
     | T

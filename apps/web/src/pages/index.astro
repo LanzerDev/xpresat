@@ -19,6 +19,12 @@ const logoVariant = theme?.logoVariant && theme.logoVariant !== 'default' ? `-${
 const logoLightSrc = theme?.logoLight?.url || `/logos/logo-horizontal${logoVariant}.png`;
 const logoDarkSrc = theme?.logoDark?.url || `/logos/logo-horizontal${logoVariant}.png`;
 const isDefaultLogo = !theme?.logoLight?.url && (!theme?.logoVariant || theme.logoVariant === 'default');
+const sectionColorMap = {
+  about: theme?.aboutLogoColor || 'amarillo',
+  services: theme?.servicesLogoColor || 'rojo',
+  process: theme?.processLogoColor || 'azul',
+  contacto: theme?.contactLogoColor || 'verde',
+};
 ---
 
 <!DOCTYPE html>
@@ -41,7 +47,7 @@ const isDefaultLogo = !theme?.logoLight?.url && (!theme?.logoVariant || theme.lo
 </head>
 <body>
   <!-- Header / Navigation -->
-  <Navbar isHome={true} logoLightSrc={logoLightSrc} logoDarkSrc={logoDarkSrc} isDefaultLogo={isDefaultLogo} />
+  <Navbar isHome={true} logoLightSrc={logoLightSrc} logoDarkSrc={logoDarkSrc} isDefaultLogo={isDefaultLogo} sectionColorMap={sectionColorMap} />
 
   <!-- Hero Section -->
   <Hero 
