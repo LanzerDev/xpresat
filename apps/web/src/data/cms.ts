@@ -42,6 +42,8 @@ export interface ContactInfo {
   socialNetworks: SocialNetwork[];
 }
 
+export type LogoColor = 'default' | 'amarillo' | 'rojo' | 'azul' | 'verde';
+
 export interface ThemeConfig {
   logoVariant: 'default' | 'azul' | 'rojo' | 'amarillo';
   primaryColor: string;
@@ -49,6 +51,10 @@ export interface ThemeConfig {
   accentYellowColor: string;
   logoLight?: Media;
   logoDark?: Media;
+  aboutLogoColor?: LogoColor;
+  servicesLogoColor?: LogoColor;
+  processLogoColor?: LogoColor;
+  contactLogoColor?: LogoColor;
 }
 
 export interface LandingPageData {

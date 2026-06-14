@@ -110,7 +110,7 @@ const historyHtml = renderLexical(history?.root || history);
     left: 0;
     width: 60px;
     height: 4px;
-    background-color: var(--color-primary);
+    background-color: var(--color-accent-yellow);
     border-radius: 2px;
   }
 
@@ -124,11 +124,34 @@ const historyHtml = renderLexical(history?.root || history);
     margin-bottom: 1.5rem;
   }
 
+  :global(.about-heading) {
+    color: var(--color-accent-yellow);
+    margin-bottom: 1rem;
+    margin-top: 0.5rem;
+  }
+
+  .about-info-col {
+    position: relative;
+  }
+
+  .about-info-col::before {
+    content: '';
+    position: absolute;
+    top: -3rem;
+    left: -4rem;
+    width: 220px;
+    height: 220px;
+    background: radial-gradient(circle, rgba(248, 170, 31, 0.07) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
   .director-card {
     display: flex;
     align-items: center;
     gap: 1.5rem;
     padding: 1.5rem;
+    border-left: 3px solid var(--color-accent-yellow);
   }
 
   .director-img {
@@ -136,7 +159,8 @@ const historyHtml = renderLexical(history?.root || history);
     height: 70px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid var(--color-primary);
+    border: 2px solid var(--color-accent-yellow);
+    box-shadow: 0 0 0 4px rgba(248, 170, 31, 0.15);
   }
 
   .director-name {

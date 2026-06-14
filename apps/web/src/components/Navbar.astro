@@ -1,19 +1,46 @@
 ---
+import type { LogoColor } from '../data/cms';
+
 interface Props {
   isHome?: boolean;
   logoLightSrc: string;
-  logoDarkSrc: string;
+  logoDarkSrc?: string;
   isDefaultLogo?: boolean;
+  sectionColorMap?: Record<string, LogoColor>;
 }
 
-const { isHome = true, logoLightSrc, logoDarkSrc, isDefaultLogo = false } = Astro.props;
+const { isHome = true, logoLightSrc, sectionColorMap = {} } = Astro.props;
+
+const COLOR_LOGOS: Record<LogoColor, string> = {
+  default: '/logos/logo-horizontal.png',
+  amarillo: '/logos/logo-horizontal-amarillo.png',
+  rojo: '/logos/logo-horizontal-rojo.png',
+  azul: '/logos/logo-horizontal-azul.png',
+  verde: '/logos/logo-horizontal-verde.png',
+};
+
+const allColors = Object.keys(COLOR_LOGOS) as LogoColor[];
 ---
 
 <header class="main-header" id="navbar">
   <div class="container header-container">
     <a href="/" class="logo">
-      <img src={logoLightSrc} alt="XpresaT" class="logo-img logo-light" />
-      <img src={logoDarkSrc} alt="XpresaT" class="logo-img logo-dark" />
+      <div class="logo-wrapper">
+        <!-- Light mode base logo (default state) -->
+        <img src={logoLightSrc} alt="XpresaT" class="logo-light-img" />
+        <!-- Color-transitioning logos — dark mode primary, light mode overlay -->
+        <div class="logo-colors" id="logo-colors" data-section-colors={JSON.stringify(sectionColorMap)}>
+          {allColors.map((color) => (
+            <img
+              src={COLOR_LOGOS[color]}
+              alt={color === 'default' ? 'XpresaT' : ''}
+              aria-hidden={color !== 'default' ? 'true' : undefined}
+              class={`logo-color logo-color--${color}${color === 'default' ? ' is-active' : ''}`}
+              data-color={color}
+            />
+          ))}
+        </div>
+      </div>
     </a>
     
     <nav class="nav-menu">
@@ -101,21 +128,67 @@ const { isHome = true, logoLightSrc, logoDarkSrc, isDefaultLogo = false } = Astr
     background-color: #f3f4f6;
   }
 
-  .logo-img.logo-light {
-    display: none;
+  /* Logo wrapper: relative container for both modes */
+  .logo-wrapper {
+    position: relative;
+    display: inline-block;
   }
-  .logo-img.logo-dark {
+
+  /* Light mode base — hidden in dark mode, sizes wrapper in light mode */
+  .logo-light-img {
+    display: none;
+    height: 52px;
+    width: auto;
+  }
+
+  :global(html.light) .logo-light-img {
     display: block;
   }
 
-  :global(html.light) .logo-img.logo-light {
+  /* Color crossfade container */
+  .logo-colors {
+    position: relative;
+    display: inline-block;
+  }
+
+  /* In light mode: overlay the color logos on top of the light base */
+  :global(html.light) .logo-colors {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     display: block;
   }
-  :global(html.light) .logo-img.logo-dark {
+
+  .logo-color {
+    height: 52px;
+    width: auto;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+
+  /* Default (white) logo stays in flow to size the container in dark mode */
+  .logo-color--default {
+    display: block;
+    position: relative;
+  }
+
+  /* In light mode: hide the white default — logo-light-img is the default */
+  :global(html.light) .logo-color--default {
     display: none;
   }
 
+  /* All color variants overlay absolutely */
+  .logo-color:not(.logo-color--default) {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
 
+  .logo-color.is-active {
+    opacity: 1;
+  }
 
   .header-container {
     display: flex;
@@ -126,12 +199,6 @@ const { isHome = true, logoLightSrc, logoDarkSrc, isDefaultLogo = false } = Astr
   .logo {
     display: flex;
     align-items: center;
-  }
-
-  .logo-img {
-    height: 52px;
-    width: auto;
-    display: block;
   }
 
   .nav-list {
@@ -161,10 +228,10 @@ const { isHome = true, logoLightSrc, logoDarkSrc, isDefaultLogo = false } = Astr
     transition: var(--transition-smooth);
   }
 
-  .nav-list li:nth-child(1) .nav-link::after { background-color: var(--color-primary); }
+  .nav-list li:nth-child(1) .nav-link::after { background-color: var(--color-accent-yellow); }
   .nav-list li:nth-child(2) .nav-link::after { background-color: var(--color-accent-red); }
-  .nav-list li:nth-child(3) .nav-link::after { background-color: var(--color-accent-yellow); }
-  .nav-list li:nth-child(4) .nav-link::after { background-color: var(--color-primary); }
+  .nav-list li:nth-child(3) .nav-link::after { background-color: var(--color-primary); }
+  .nav-list li:nth-child(4) .nav-link::after { background-color: #25d366; }
 
   .nav-link:hover {
     color: var(--color-text-light);
@@ -326,13 +393,85 @@ const { isHome = true, logoLightSrc, logoDarkSrc, isDefaultLogo = false } = Astr
         bars?.forEach(bar => bar.setAttribute('style', ''));
       });
     });
+
+    // Scroll to top on logo click if on home page
+    const logoLink = document.querySelector('.logo');
+    logoLink?.addEventListener('click', (e) => {
+      if (window.location.pathname === '/' && !e.ctrlKey && !e.metaKey && !e.shiftKey) {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        history.pushState(null, '', '/');
+        
+        // Close mobile menu if open
+        menu?.classList.remove('open');
+        toggle?.setAttribute('aria-expanded', 'false');
+        const bars = toggle?.querySelectorAll('.toggle-bar');
+        bars?.forEach(bar => bar.setAttribute('style', ''));
+      }
+    });
+  }
+
+  function setupLogoColorTransition() {
+    const container = document.getElementById('logo-colors');
+    if (!container) return;
+
+    const sectionColorMap: Record<string, string> = JSON.parse(
+      container.dataset.sectionColors || '{}'
+    );
+    const logos = container.querySelectorAll<HTMLElement>('.logo-color');
+
+    function setActiveColor(color: string) {
+      logos.forEach(el => {
+        el.classList.toggle('is-active', el.dataset.color === color);
+      });
+    }
+
+    // Reset to default when scrolled back to hero
+    window.addEventListener('scroll', () => {
+      if (window.scrollY < 100) setActiveColor('default');
+    }, { passive: true });
+
+    // Priority-based observer: handles #process being nested inside #services
+    // When multiple sections intersect, the one lower in the page wins
+    const sectionPriority = ['contacto', 'process', 'services', 'about'];
+    const intersecting = new Set<string>();
+
+    function updateFromIntersections() {
+      for (const id of sectionPriority) {
+        if (intersecting.has(id)) {
+          setActiveColor(sectionColorMap[id] || 'default');
+          return;
+        }
+      }
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            intersecting.add(entry.target.id);
+          } else {
+            intersecting.delete(entry.target.id);
+          }
+        });
+        if (window.scrollY >= 100) updateFromIntersections();
+      },
+      { threshold: 0.15 }
+    );
+
+    Object.keys(sectionColorMap).forEach(sectionId => {
+      const el = document.getElementById(sectionId);
+      if (el) observer.observe(el);
+    });
   }
 
   // Run on page load and astro page transitions
   setupThemeToggle();
   setupNavbar();
+  setupLogoColorTransition();
   document.addEventListener('astro:after-swap', () => {
     setupThemeToggle();
     setupNavbar();
+    setupLogoColorTransition();
   });
 </script>
