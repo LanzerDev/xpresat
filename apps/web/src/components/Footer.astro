@@ -21,9 +21,12 @@ const socialLabels: Record<SocialNetwork['platform'], string> = {
 
 interface Props {
   contact: ContactInfo;
+  logoLightSrc: string;
+  logoDarkSrc: string;
+  isDefaultLogo?: boolean;
 }
 
-const { contact } = Astro.props;
+const { contact, logoLightSrc, logoDarkSrc, isDefaultLogo = false } = Astro.props;
 const whatsappLink = `https://wa.me/${contact.whatsappNumber}?text=Hola,%20vengo%20desde%20la%20página%20web%20y%20me%20gustaría%20cotizar%20un%20servicio.`;
 ---
 
@@ -31,7 +34,8 @@ const whatsappLink = `https://wa.me/${contact.whatsappNumber}?text=Hola,%20vengo
   <div class="container footer-container">
     <div class="footer-brand">
       <a href="#" class="footer-logo">
-        <span class="logo-bold">Xpresa</span><span class="logo-accent">T</span>
+        <img src={logoLightSrc} alt="XpresaT" class="footer-logo-img logo-light" />
+        <img src={logoDarkSrc} alt="XpresaT" class="footer-logo-img logo-dark" />
       </a>
       <p class="footer-desc">Agencia creativa que comunica ideas, potencia marcas y diseña el futuro digital.</p>
       <div class="footer-socials">
@@ -98,6 +102,26 @@ const whatsappLink = `https://wa.me/${contact.whatsappNumber}?text=Hola,%20vengo
     margin-top: 8rem;
   }
 
+  :global(html.light) .main-footer {
+    background-color: #e8eaed;
+  }
+
+  .footer-logo-img.logo-light {
+    display: none;
+  }
+  .footer-logo-img.logo-dark {
+    display: block;
+  }
+
+  :global(html.light) .footer-logo-img.logo-light {
+    display: block;
+  }
+  :global(html.light) .footer-logo-img.logo-dark {
+    display: none;
+  }
+
+
+
   .footer-container {
     display: grid;
     grid-template-columns: 1.5fr 1fr 1.2fr;
@@ -106,19 +130,14 @@ const whatsappLink = `https://wa.me/${contact.whatsappNumber}?text=Hola,%20vengo
   }
 
   .footer-logo {
-    font-family: var(--font-display);
-    font-size: 1.8rem;
-    font-weight: 800;
-    margin-bottom: 1.2rem;
     display: inline-block;
+    margin-bottom: 1.2rem;
   }
 
-  .logo-bold {
-    color: var(--color-text-light);
-  }
-
-  .logo-accent {
-    color: var(--color-primary);
+  .footer-logo-img {
+    height: 56px;
+    width: auto;
+    display: block;
   }
 
   .footer-desc {
@@ -210,7 +229,11 @@ const whatsappLink = `https://wa.me/${contact.whatsappNumber}?text=Hola,%20vengo
     padding: 2rem 0;
     text-align: center;
     font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.25);
+  }
+
+  .footer-bottom p {
+    color: var(--color-text-muted);
+    opacity: 0.65;
   }
 
   /* Floating Sticky WhatsApp Button */

@@ -448,6 +448,14 @@ export interface LandingPage {
         id?: string | null;
       }[]
     | null;
+  theme?: {
+    logoVariant?: ('default' | 'azul' | 'rojo' | 'amarillo') | null;
+    logoLight?: (number | null) | Media;
+    logoDark?: (number | null) | Media;
+    primaryColor?: string | null;
+    accentColor?: string | null;
+    accentYellowColor?: string | null;
+  };
   contact: {
     phone: string;
     email: string;
@@ -515,6 +523,16 @@ export interface LandingPageSelect<T extends boolean = true> {
         stepTitle?: T;
         stepDescription?: T;
         id?: T;
+      };
+  theme?:
+    | T
+    | {
+        logoVariant?: T;
+        logoLight?: T;
+        logoDark?: T;
+        primaryColor?: T;
+        accentColor?: T;
+        accentYellowColor?: T;
       };
   contact?:
     | T

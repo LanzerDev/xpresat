@@ -179,6 +179,55 @@ export const LandingPage: GlobalConfig = {
       ],
     },
     {
+      name: 'theme',
+      type: 'group',
+      label: 'Tema Visual',
+      fields: [
+        {
+          name: 'logoVariant',
+          type: 'select',
+          label: 'Variante de Logo (Fallback)',
+          defaultValue: 'default',
+          options: [
+            { label: 'Default (Blanco)', value: 'default' },
+            { label: 'Azul', value: 'azul' },
+            { label: 'Rojo', value: 'rojo' },
+            { label: 'Amarillo', value: 'amarillo' },
+          ],
+        },
+        {
+          name: 'logoLight',
+          type: 'upload',
+          relationTo: 'media',
+          label: 'Logo Light Mode (Fondo Claro)',
+        },
+        {
+          name: 'logoDark',
+          type: 'upload',
+          relationTo: 'media',
+          label: 'Logo Dark Mode (Fondo Oscuro)',
+        },
+        {
+          name: 'primaryColor',
+          type: 'text',
+          label: 'Color Primario (hex)',
+          defaultValue: '#3d9ef2',
+        },
+        {
+          name: 'accentColor',
+          type: 'text',
+          label: 'Color Acento Rojo (hex)',
+          defaultValue: '#e53455',
+        },
+        {
+          name: 'accentYellowColor',
+          type: 'text',
+          label: 'Color Acento Amarillo (hex)',
+          defaultValue: '#f8aa1f',
+        },
+      ],
+    },
+    {
       name: 'contact',
       type: 'group',
       label: 'Información de Contacto',

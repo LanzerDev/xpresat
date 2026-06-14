@@ -12,5 +12,17 @@ export const Media: CollectionConfig = {
       required: true,
     },
   ],
-  upload: true,
+  upload: {
+    staticDir: 'media',
+    pasteURL: {
+      allowList: [
+        {
+          protocol: 'https',
+        },
+        {
+          protocol: 'http',
+        },
+      ],
+    },
+  },
 }

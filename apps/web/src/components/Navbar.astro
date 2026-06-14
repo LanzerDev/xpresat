@@ -1,15 +1,19 @@
 ---
 interface Props {
   isHome?: boolean;
+  logoLightSrc: string;
+  logoDarkSrc: string;
+  isDefaultLogo?: boolean;
 }
 
-const { isHome = true } = Astro.props;
+const { isHome = true, logoLightSrc, logoDarkSrc, isDefaultLogo = false } = Astro.props;
 ---
 
 <header class="main-header" id="navbar">
   <div class="container header-container">
     <a href="/" class="logo">
-      <span class="logo-bold">Xpresa</span><span class="logo-accent">T</span>
+      <img src={logoLightSrc} alt="XpresaT" class="logo-img logo-light" />
+      <img src={logoDarkSrc} alt="XpresaT" class="logo-img logo-dark" />
     </a>
     
     <nav class="nav-menu">
@@ -29,11 +33,20 @@ const { isHome = true } = Astro.props;
       </ul>
     </nav>
 
-    <button class="mobile-toggle" aria-label="Toggle Menu" aria-expanded="false">
-      <span class="toggle-bar"></span>
-      <span class="toggle-bar"></span>
-      <span class="toggle-bar"></span>
-    </button>
+    <div class="nav-actions">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+        <!-- Moon: shown in dark mode -->
+        <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <!-- Sun: shown in light mode -->
+        <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      </button>
+
+      <button class="mobile-toggle" aria-label="Toggle Menu" aria-expanded="false">
+        <span class="toggle-bar"></span>
+        <span class="toggle-bar"></span>
+        <span class="toggle-bar"></span>
+      </button>
+    </div>
   </div>
 </header>
 
@@ -60,6 +73,50 @@ const { isHome = true } = Astro.props;
     padding-top: calc(1rem + env(safe-area-inset-top, 0px));
   }
 
+  :global(html.light) .main-header.scrolled {
+    background-color: rgba(242, 243, 245, 0.9);
+  }
+
+  /* Light mode + not scrolled: navbar is transparent over the dark hero, keep links light */
+  :global(html.light) .main-header:not(.scrolled) .nav-link {
+    color: #9ca3af;
+  }
+
+  :global(html.light) .main-header:not(.scrolled) .nav-link:hover {
+    color: #f3f4f6;
+  }
+
+  :global(html.light) .main-header:not(.scrolled) .btn-projects {
+    background-color: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #9ca3af;
+  }
+
+  :global(html.light) .main-header:not(.scrolled) .theme-toggle {
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #9ca3af;
+  }
+
+  :global(html.light) .main-header:not(.scrolled) .toggle-bar {
+    background-color: #f3f4f6;
+  }
+
+  .logo-img.logo-light {
+    display: none;
+  }
+  .logo-img.logo-dark {
+    display: block;
+  }
+
+  :global(html.light) .logo-img.logo-light {
+    display: block;
+  }
+  :global(html.light) .logo-img.logo-dark {
+    display: none;
+  }
+
+
+
   .header-container {
     display: flex;
     justify-content: space-between;
@@ -67,18 +124,14 @@ const { isHome = true } = Astro.props;
   }
 
   .logo {
-    font-family: var(--font-display);
-    font-size: 1.8rem;
-    font-weight: 800;
-    letter-spacing: -0.03em;
+    display: flex;
+    align-items: center;
   }
 
-  .logo-bold {
-    color: var(--color-text-light);
-  }
-
-  .logo-accent {
-    color: var(--color-primary);
+  .logo-img {
+    height: 52px;
+    width: auto;
+    display: block;
   }
 
   .nav-list {
@@ -107,6 +160,11 @@ const { isHome = true } = Astro.props;
     background-color: var(--color-primary);
     transition: var(--transition-smooth);
   }
+
+  .nav-list li:nth-child(1) .nav-link::after { background-color: var(--color-primary); }
+  .nav-list li:nth-child(2) .nav-link::after { background-color: var(--color-accent-red); }
+  .nav-list li:nth-child(3) .nav-link::after { background-color: var(--color-accent-yellow); }
+  .nav-list li:nth-child(4) .nav-link::after { background-color: var(--color-primary); }
 
   .nav-link:hover {
     color: var(--color-text-light);
@@ -153,6 +211,39 @@ const { isHome = true } = Astro.props;
     transition: var(--transition-smooth);
   }
 
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .theme-toggle {
+    background: transparent;
+    border: 1px solid var(--color-card-border);
+    border-radius: 9999px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--color-text-muted);
+    transition: var(--transition-smooth);
+    padding: 0;
+    flex-shrink: 0;
+  }
+
+  .theme-toggle:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+
+  .icon-sun { display: none; }
+  .icon-moon { display: block; }
+
+  :global(html.light) .icon-sun { display: block; }
+  :global(html.light) .icon-moon { display: none; }
+
   @media (max-width: 768px) {
     .mobile-toggle {
       display: flex;
@@ -185,6 +276,14 @@ const { isHome = true } = Astro.props;
 </style>
 
 <script>
+  function setupThemeToggle() {
+    const btn = document.getElementById('theme-toggle');
+    btn?.addEventListener('click', () => {
+      const isLight = document.documentElement.classList.toggle('light');
+      localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    });
+  }
+
   function setupNavbar() {
     const navbar = document.getElementById('navbar');
     const toggle = document.querySelector('.mobile-toggle');
@@ -230,6 +329,10 @@ const { isHome = true } = Astro.props;
   }
 
   // Run on page load and astro page transitions
+  setupThemeToggle();
   setupNavbar();
-  document.addEventListener('astro:after-swap', setupNavbar);
+  document.addEventListener('astro:after-swap', () => {
+    setupThemeToggle();
+    setupNavbar();
+  });
 </script>

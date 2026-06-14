@@ -184,6 +184,12 @@ async function runSeed() {
           { platform: 'facebook', url: 'https://www.facebook.com/share/18dwa1LV61/?mibextid=wwXIfr' },
         ],
       },
+      theme: {
+        logoVariant: 'default',
+        primaryColor: '#3d9ef2',
+        accentColor: '#e53455',
+        accentYellowColor: '#f8aa1f',
+      },
     },
   })
   console.log('LandingPage Global seeded successfully.')
