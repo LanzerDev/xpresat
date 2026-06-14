@@ -48,7 +48,7 @@ const historyHtml = renderLexical(history?.root || history);
 
 <section id="about" class="about-section">
   <div class="container about-container">
-    <div class="about-info-col">
+    <div class="about-info-col" data-reveal>
       <h2 class="section-title">{title}</h2>
       <div class="about-text" set:html={historyHtml}></div>
       
@@ -62,8 +62,8 @@ const historyHtml = renderLexical(history?.root || history);
     </div>
     
     <div class="about-team-col">
-      <h3 class="team-title">Nuestro Equipo</h3>
-      <div class="team-grid">
+      <h3 class="team-title" data-reveal>Nuestro Equipo</h3>
+      <div class="team-grid" data-reveal-stagger>
         {team.map((member) => (
           <div class="team-card glass-panel">
             <div class="member-img-container">

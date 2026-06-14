@@ -9,6 +9,8 @@ import ProjectsGrid from '../components/ProjectsGrid.astro';
 import ProjectModal from '../components/ProjectModal.astro';
 import Footer from '../components/Footer.astro';
 import { getLandingPage, getProjects } from '../data/cms';
+import { ClientRouter } from 'astro:transitions';
+
 
 // Fetch dynamic data from the CMS (Payload v3)
 const landingData = await getLandingPage();
@@ -36,6 +38,10 @@ const sectionColorMap = {
   <meta charset="utf-8" />
   <script is:inline>
     (function(){var s=localStorage.getItem('theme'),d=window.matchMedia('(prefers-color-scheme: dark)').matches;if(s==='light'||(!s&&!d))document.documentElement.classList.add('light');})();
+    // Add motion-ok class early if user permits motion to avoid FOUC of reveals
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.documentElement.classList.add('motion-ok');
+    }
   </script>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="icon" href="/favicon.ico" />
@@ -44,6 +50,7 @@ const sectionColorMap = {
 
   <title>XpresaT - Agencia Creativa & Producción Audiovisual</title>
   <meta name="description" content="Agencia de marketing digital, producción audiovisual de alta calidad y desarrollo web optimizado para conversiones." />
+  <ClientRouter />
 </head>
 <body>
   <!-- Header / Navigation -->

@@ -5,6 +5,8 @@ import ProjectsGrid from '../components/ProjectsGrid.astro';
 import ProjectModal from '../components/ProjectModal.astro';
 import Footer from '../components/Footer.astro';
 import { getLandingPage, getProjects } from '../data/cms';
+import { ClientRouter } from 'astro:transitions';
+
 
 // Fetch all necessary data from PayloadCMS API
 const landingData = await getLandingPage();
@@ -26,10 +28,15 @@ const isDefaultLogo = !theme?.logoLight?.url && (!theme?.logoVariant || theme.lo
   <meta charset="UTF-8" />
   <script is:inline>
     (function(){var s=localStorage.getItem('theme'),d=window.matchMedia('(prefers-color-scheme: dark)').matches;if(s==='light'||(!s&&!d))document.documentElement.classList.add('light');})();
+    // Add motion-ok class early if user permits motion to avoid FOUC of reveals
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.documentElement.classList.add('motion-ok');
+    }
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Portfolio - XpresaT</title>
   <meta name="description" content="Casos de éxito y portafolio audiovisual de la agencia creativa XpresaT." />
+  <ClientRouter />
 </head>
 <body class="portfolio-page">
   <Navbar isHome={false} logoLightSrc={logoLightSrc} logoDarkSrc={logoDarkSrc} isDefaultLogo={isDefaultLogo} />

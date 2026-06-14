@@ -16,6 +16,11 @@
   --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --glass-blur: blur(12px);
   --container-max-width: 1200px;
+
+  /* Animation Easing & Timing */
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* Base Normalization & Aesthetics */
@@ -222,3 +227,16 @@ html.light .btn-secondary {
   color: var(--color-text-light);
   border-color: var(--color-card-border);
 }
+
+/* ── Progressive Enhancement: Scroll Reveal ──────────────── */
+/* Hide reveal elements ONLY while motion is allowed and they haven't been
+   revealed yet. Once revealed (data-revealed="true") the selector stops
+   matching, so the element keeps no forced transform — that's what lets
+   :hover transforms (e.g. card lift) work afterwards. */
+html.motion-ok [data-reveal]:not([data-revealed="true"]),
+html.motion-ok [data-reveal-stagger] > *:not([data-revealed="true"]) {
+  opacity: 0;
+  transform: translateY(24px);
+  will-change: transform, opacity;
+}
+

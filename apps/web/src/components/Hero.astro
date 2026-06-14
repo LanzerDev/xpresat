@@ -10,16 +10,25 @@ interface Props {
 
 const { title, subtitle, backgroundImage, whatsappNumber } = Astro.props;
 const whatsappLink = `https://wa.me/${whatsappNumber}?text=Hola,%20estoy%20interesado%20en%20trabajar%20con%20ustedes.`;
+
+// Split the title into words at build time so each can be masked and revealed
+// independently — viewport-agnostic, survives CMS copy edits.
+const titleWords = (title || '').trim().split(/\s+/).filter(Boolean);
 ---
 
-<section class="hero-section" style={`--hero-bg: url(${backgroundImage?.url})`}>
+<section class="hero-section">
+  <div class="hero-bg" style={`--hero-bg: url(${backgroundImage?.url})`}></div>
   <div class="hero-overlay"></div>
   <div class="container hero-container">
     <div class="hero-content">
-      <h1 class="hero-title">{title}</h1>
+      <h1 class="hero-title">
+        {titleWords.map((word) => (
+          <span class="hero-word"><span class="hero-word-inner">{word}</span></span>
+        ))}
+      </h1>
       <p class="hero-subtitle">{subtitle}</p>
       <div class="hero-actions">
-        <a href={whatsappLink} target="_blank" rel="noopener noreferrer" class="btn-primary">
+        <a href={whatsappLink} target="_blank" rel="noopener noreferrer" class="btn-primary" data-magnetic>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" class="icon-whatsapp">
             <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.455 5.705 1.456h.008c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
           </svg>
@@ -37,11 +46,31 @@ const whatsappLink = `https://wa.me/${whatsappNumber}?text=Hola,%20estoy%20inter
     min-height: 100vh;
     display: flex;
     align-items: center;
+    overflow: hidden;
+    padding-top: 80px;
+  }
+
+  /* Background lives on its own layer so the Ken Burns zoom uses transform
+     (GPU-accelerated) instead of animating background-size. */
+  .hero-bg {
+    position: absolute;
+    inset: 0;
     background-image: var(--hero-bg);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    padding-top: 80px;
+    transform-origin: center;
+    z-index: 0;
+  }
+
+  html.motion-ok .hero-bg {
+    animation: ken-burns 22s ease-in-out infinite alternate;
+    will-change: transform;
+  }
+
+  @keyframes ken-burns {
+    from { transform: scale(1); }
+    to { transform: scale(1.08); }
   }
 
   /* Dark overlay with slight color tint to blend with brand colors */
@@ -62,7 +91,6 @@ const whatsappLink = `https://wa.me/${whatsappNumber}?text=Hola,%20estoy%20inter
 
   .hero-content {
     max-width: 750px;
-    animation: fade-in-up 1s ease-out forwards;
   }
 
   .hero-title {
@@ -71,6 +99,25 @@ const whatsappLink = `https://wa.me/${whatsappNumber}?text=Hola,%20estoy%20inter
     margin-bottom: 1.5rem;
     line-height: 1.05;
     text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Per-word mask for the cinematic title-card reveal */
+  .hero-word {
+    display: inline-block;
+    overflow: hidden;
+    /* Extra room so descenders (g, y, p) aren't clipped by the mask */
+    padding-bottom: 0.15em;
+    margin-bottom: -0.15em;
+    margin-right: 0.25em;
+    vertical-align: top;
+  }
+
+  .hero-word-inner {
+    display: inline-block;
+  }
+
+  html.motion-ok .hero-word-inner {
+    transform: translateY(110%);
   }
 
   .hero-subtitle {
@@ -84,6 +131,11 @@ const whatsappLink = `https://wa.me/${whatsappNumber}?text=Hola,%20estoy%20inter
     display: flex;
     flex-wrap: wrap;
     gap: 1rem;
+  }
+
+  html.motion-ok .hero-subtitle,
+  html.motion-ok .hero-actions {
+    opacity: 0;
   }
 
   .hero-actions :global(.btn-secondary) {
@@ -100,14 +152,66 @@ const whatsappLink = `https://wa.me/${whatsappNumber}?text=Hola,%20estoy%20inter
     margin-right: 0.25rem;
   }
 
-  @keyframes fade-in-up {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
+  /* Gentler zoom on small screens */
+  @media (max-width: 640px) {
+    @keyframes ken-burns {
+      from { transform: scale(1); }
+      to { transform: scale(1.04); }
     }
   }
 </style>
+
+<script>
+  import { animate, stagger } from 'motion';
+
+  function runHeroIntro() {
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const words = document.querySelectorAll<HTMLElement>('.hero-word-inner');
+    const subtitle = document.querySelector<HTMLElement>('.hero-subtitle');
+    const actions = document.querySelector<HTMLElement>('.hero-actions');
+
+    // Reduced motion: ensure everything is visible without any movement.
+    if (reduced) {
+      words.forEach((w) => (w.style.transform = 'none'));
+      if (subtitle) subtitle.style.opacity = '1';
+      if (actions) actions.style.opacity = '1';
+      return;
+    }
+
+    if (words.length) {
+      animate(
+        words,
+        { y: ['110%', '0%'] },
+        { duration: 0.8, delay: stagger(0.08, { startDelay: 0.15 }), ease: [0.16, 1, 0.3, 1] }
+      );
+    }
+    if (subtitle) {
+      animate(subtitle, { opacity: [0, 1], y: [16, 0] }, { duration: 0.6, delay: 0.55, ease: [0.16, 1, 0.3, 1] });
+    }
+    if (actions) {
+      animate(actions, { opacity: [0, 1], y: [16, 0] }, { duration: 0.6, delay: 0.75, ease: [0.16, 1, 0.3, 1] })
+        // Clear inline transform so the button :hover scale keeps working.
+        .finished.then(() => actions.style.removeProperty('transform'))
+        .catch(() => {});
+    }
+
+    // Pause the Ken Burns zoom when the hero scrolls out of view.
+    const bg = document.querySelector<HTMLElement>('.hero-bg');
+    const section = document.querySelector<HTMLElement>('.hero-section');
+    if (bg && section) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            bg.style.animationPlayState = e.isIntersecting ? 'running' : 'paused';
+          });
+        },
+        { threshold: 0 }
+      );
+      io.observe(section);
+    }
+  }
+
+  // ClientRouter fires astro:page-load on the initial load and after every
+  // client-side navigation, so this covers both cases.
+  document.addEventListener('astro:page-load', runHeroIntro);
+</script>

@@ -12,14 +12,14 @@ const { services, process } = Astro.props;
 <section id="services" class="services-section">
   <!-- Services Grid -->
   <div class="container services-container">
-    <div class="section-header">
+    <div class="section-header" data-reveal>
       <h2 class="section-title">Nuestros Servicios</h2>
       <p class="section-subtitle">Soluciones creativas y tecnológicas diseñadas para posicionar tu marca en el mercado digital.</p>
     </div>
     
-    <div class="services-grid">
+    <div class="services-grid" data-reveal-stagger>
       {services.map((service) => (
-        <div class="service-card glass-panel">
+        <div class="service-card glass-panel" data-reveal>
           <div class="service-icon-container">
             {service.icon === 'marketing' && (
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon">
@@ -57,12 +57,12 @@ const { services, process } = Astro.props;
   <!-- Work Process (Timeline) -->
   <div id="process" class="process-wrapper">
     <div class="container process-container">
-      <div class="section-header">
+      <div class="section-header" data-reveal>
         <h2 class="section-title">Nuestro Proceso</h2>
         <p class="section-subtitle">Cómo trabajamos contigo desde el primer contacto hasta el éxito del proyecto.</p>
       </div>
 
-      <div class="process-timeline">
+      <div class="process-timeline" data-reveal-stagger>
         {process.map((step) => (
           <div class="process-step glass-panel">
             <h4 class="process-step-title">{step.stepTitle}</h4>
