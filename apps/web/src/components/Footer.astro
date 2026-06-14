@@ -225,6 +225,8 @@ const whatsappLink = `https://wa.me/${contact.whatsappNumber}?text=Hola,%20vengo
     height: 56px;
     width: auto;
     display: block;
+    /* Reserve width before the image loads to avoid layout shift (logo is 8944x3252) */
+    aspect-ratio: 8944 / 3252;
   }
 
   .footer-desc {
