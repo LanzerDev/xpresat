@@ -16,12 +16,8 @@ export const Media: CollectionConfig = {
     staticDir: 'media',
     pasteURL: {
       allowList: [
-        {
-          protocol: 'https',
-        },
-        {
-          protocol: 'http',
-        },
+        { hostname: '*', protocol: 'https' },
+        { hostname: '*', protocol: 'http' },
       ],
     },
   },
