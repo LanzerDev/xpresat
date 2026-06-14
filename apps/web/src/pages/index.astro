@@ -46,12 +46,21 @@ const sectionColorMap = {
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preconnect" href="https://xpresat-cms.vercel.app" />
-  <!-- Direct font <link> (not @import in CSS) so the browser discovers it while
-       parsing the HTML, removing the CSS→CSS→font request chain. -->
+  <!-- Load the font CSS without blocking render: media="print" makes it
+       non-blocking, then onload promotes it to all. display=swap shows the
+       fallback text immediately. <noscript> covers JS-disabled clients. -->
   <link
     rel="stylesheet"
     href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap"
+    media="print"
+    onload="this.media='all'"
   />
+  <noscript>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap"
+    />
+  </noscript>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="icon" href="/favicon.ico" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
