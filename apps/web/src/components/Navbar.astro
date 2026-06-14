@@ -22,9 +22,10 @@ const COLOR_LOGOS: Record<LogoColor, string> = {
 const allColors = Object.keys(COLOR_LOGOS) as LogoColor[];
 ---
 
+<div class="scroll-progress" aria-hidden="true"><span class="scroll-progress-fill"></span></div>
 <header class="main-header" id="navbar">
   <div class="container header-container">
-    <a href="/" class="logo">
+    <a href="/" class="logo" transition:name="brand-logo">
       <div class="logo-wrapper">
         <!-- Light mode base logo (default state) -->
         <img src={logoLightSrc} alt="XpresaT" class="logo-light-img" />
@@ -78,6 +79,33 @@ const allColors = Object.keys(COLOR_LOGOS) as LogoColor[];
 </header>
 
 <style>
+  /* Scroll progress indicator */
+  .scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    z-index: 1100;
+    pointer-events: none;
+    background: transparent;
+  }
+
+  .scroll-progress-fill {
+    display: block;
+    height: 100%;
+    width: 100%;
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+    background: linear-gradient(
+      90deg,
+      var(--color-accent-yellow),
+      var(--color-accent-red),
+      var(--color-primary)
+    );
+    will-change: transform;
+  }
+
   .main-header {
     position: fixed;
     top: 0;
@@ -241,6 +269,15 @@ const allColors = Object.keys(COLOR_LOGOS) as LogoColor[];
     width: 100%;
   }
 
+  /* Active section highlight (driven by the section IntersectionObserver) */
+  .nav-link.is-current {
+    color: var(--color-text-light);
+  }
+
+  .nav-link.is-current::after {
+    width: 100%;
+  }
+
   .btn-projects {
     background-color: var(--color-card);
     border: 1px solid var(--color-card-border);
@@ -343,6 +380,9 @@ const allColors = Object.keys(COLOR_LOGOS) as LogoColor[];
 </style>
 
 <script>
+  import { initReveal } from '../scripts/reveal';
+  import { initMagnetic } from '../scripts/magnetic';
+
   function setupThemeToggle() {
     const btn = document.getElementById('theme-toggle');
     btn?.addEventListener('click', () => {
@@ -426,9 +466,21 @@ const allColors = Object.keys(COLOR_LOGOS) as LogoColor[];
       });
     }
 
+    // Highlight the nav link matching the active section
+    const navLinks = document.querySelectorAll<HTMLAnchorElement>('.nav-link');
+    function setActiveNav(sectionId: string | null) {
+      navLinks.forEach(link => {
+        const href = link.getAttribute('href') || '';
+        link.classList.toggle('is-current', sectionId !== null && href.endsWith(`#${sectionId}`));
+      });
+    }
+
     // Reset to default when scrolled back to hero
     window.addEventListener('scroll', () => {
-      if (window.scrollY < 100) setActiveColor('default');
+      if (window.scrollY < 100) {
+        setActiveColor('default');
+        setActiveNav(null);
+      }
     }, { passive: true });
 
     // Priority-based observer: handles #process being nested inside #services
@@ -440,9 +492,11 @@ const allColors = Object.keys(COLOR_LOGOS) as LogoColor[];
       for (const id of sectionPriority) {
         if (intersecting.has(id)) {
           setActiveColor(sectionColorMap[id] || 'default');
+          setActiveNav(id);
           return;
         }
       }
+      setActiveNav(null);
     }
 
     const observer = new IntersectionObserver(
@@ -465,13 +519,53 @@ const allColors = Object.keys(COLOR_LOGOS) as LogoColor[];
     });
   }
 
+  // Scroll progress bar (scaleX driven by scroll position, rAF-throttled)
+  let progressFill: HTMLElement | null = null;
+  let progressTicking = false;
+
+  function updateScrollProgress() {
+    if (!progressFill) return;
+    const doc = document.documentElement;
+    const max = doc.scrollHeight - doc.clientHeight;
+    const ratio = max > 0 ? Math.min(1, Math.max(0, doc.scrollTop / max)) : 0;
+    progressFill.style.transform = `scaleX(${ratio})`;
+  }
+
+  function onScrollProgress() {
+    if (progressTicking) return;
+    progressTicking = true;
+    requestAnimationFrame(() => {
+      updateScrollProgress();
+      progressTicking = false;
+    });
+  }
+
+  function setupScrollProgress() {
+    progressFill = document.querySelector<HTMLElement>('.scroll-progress-fill');
+    updateScrollProgress();
+  }
+
   // Run on page load and astro page transitions
   setupThemeToggle();
   setupNavbar();
   setupLogoColorTransition();
+  setupScrollProgress();
+  initReveal();
+  initMagnetic();
+
+  // Registered once (module runs once) so listeners never accumulate across navigations
+  window.addEventListener('scroll', onScrollProgress, { passive: true });
+  window.addEventListener('resize', onScrollProgress, { passive: true });
+
   document.addEventListener('astro:after-swap', () => {
     setupThemeToggle();
     setupNavbar();
     setupLogoColorTransition();
+    setupScrollProgress();
+  });
+
+  document.addEventListener('astro:page-load', () => {
+    initReveal();
+    initMagnetic();
   });
 </script>

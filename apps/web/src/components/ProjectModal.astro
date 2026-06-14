@@ -49,12 +49,15 @@
     justify-content: center;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Exit (faster, ~70% of enter) */
+    transition: opacity 0.28s var(--ease-out-quart);
   }
 
   .modal-overlay.open {
     opacity: 1;
     pointer-events: auto;
+    /* Enter */
+    transition: opacity 0.4s var(--ease-out-expo);
   }
 
   .modal-container {
@@ -67,12 +70,15 @@
     position: relative;
     padding: 2.5rem;
     overflow: hidden;
-    transform: scale(0.95);
-    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform: scale(0.96);
+    /* Exit (faster) */
+    transition: transform 0.28s var(--ease-out-quart);
   }
 
   .modal-overlay.open .modal-container {
     transform: scale(1);
+    /* Enter — refined ease-out-expo, no bounce */
+    transition: transform 0.45s var(--ease-out-expo);
   }
 
   .modal-close {
@@ -216,6 +222,8 @@
 </style>
 
 <script>
+  import { animate, stagger } from 'motion';
+
   function setupModal() {
     const modal = document.getElementById('project-modal');
     const closeBtn = modal?.querySelector('.modal-close');
@@ -365,7 +373,26 @@
       modal!.classList.add('open');
       modal!.setAttribute('aria-hidden', 'false');
       closeBtn!.focus();
-      
+
+      // Stagger the bento panels in (skip under reduced motion)
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        const panels = modal!.querySelectorAll<HTMLElement>(
+          '.bento-video, .bento-info, .bento-gallery'
+        );
+        animate(
+          panels,
+          { opacity: [0, 1], y: [16, 0] },
+          { duration: 0.45, delay: stagger(0.08, { startDelay: 0.1 }), ease: [0.16, 1, 0.3, 1] }
+        )
+          .finished.then(() => {
+            panels.forEach((p) => {
+              p.style.removeProperty('opacity');
+              p.style.removeProperty('transform');
+            });
+          })
+          .catch(() => {});
+      }
+
       // Prevent body scroll
       document.body.style.overflow = 'hidden';
     }
