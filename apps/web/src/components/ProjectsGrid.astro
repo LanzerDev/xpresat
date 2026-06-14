@@ -76,7 +76,7 @@ function renderLexical(node: any): string {
             aria-label={`Ver detalles del proyecto ${project.title}`}
           >
             <div class="card-media">
-              <img src={project.featuredImage?.url} alt={project.featuredImage?.alt} class="card-img" />
+              <img src={project.featuredImage?.url} alt={project.featuredImage?.alt} class="card-img" width="480" height="300" loading="lazy" />
               <div class="card-overlay">
                 <div class="overlay-content">
                   <span class="view-tag">Ver Proyecto</span>

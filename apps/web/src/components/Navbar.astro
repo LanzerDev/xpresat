@@ -28,7 +28,7 @@ const allColors = Object.keys(COLOR_LOGOS) as LogoColor[];
     <a href="/" class="logo" transition:name="brand-logo">
       <div class="logo-wrapper">
         <!-- Light mode base logo (default state) -->
-        <img src={logoLightSrc} alt="XpresaT" class="logo-light-img" />
+        <img src={logoLightSrc} alt="XpresaT" class="logo-light-img" width="143" height="52" />
         <!-- Color-transitioning logos — dark mode primary, light mode overlay -->
         <div class="logo-colors" id="logo-colors" data-section-colors={JSON.stringify(sectionColorMap)}>
           {allColors.map((color) => (
@@ -38,6 +38,8 @@ const allColors = Object.keys(COLOR_LOGOS) as LogoColor[];
               aria-hidden={color !== 'default' ? 'true' : undefined}
               class={`logo-color logo-color--${color}${color === 'default' ? ' is-active' : ''}`}
               data-color={color}
+              width="143"
+              height="52"
             />
           ))}
         </div>
